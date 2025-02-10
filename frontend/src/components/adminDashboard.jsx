@@ -5,7 +5,7 @@ import AdminHeader from './adminHeader';
 
 const AdminDashboard = ({user,onLogout}) => {
   const [orders, setOrders] = useState([]);
-
+  const [searchTerm, setSearchTerm] = useState('');
   // Retrieve admin data from localStorage
   const adminData = JSON.parse(localStorage.getItem('adminData'));
   const adminId = adminData?.adminId;
@@ -37,6 +37,14 @@ const AdminDashboard = ({user,onLogout}) => {
       });
   }, [adminId]);
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredOrders = orders.filter(order =>
+    order.orderId.toString().includes(searchTerm)
+  );
+
   return (
     <div className="admin-dashboard">
       <header>
@@ -45,9 +53,15 @@ const AdminDashboard = ({user,onLogout}) => {
       <main className="dashboard-content">
         <section className="orders-section">
           <h2 className="section-title">Orders</h2>
-          {orders.length > 0 ? (
+          <input
+            type="number"
+            placeholder="Search by Order ID"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />         
+          {filteredOrders.length > 0 ? (
             <ul className="orders-list">
-              {orders.map((order) => (
+              {filteredOrders.map((order) => (
                 <li key={order.id} className="order-card">
                   <div className="order-details">
                     <h3>Order Details ----</h3>

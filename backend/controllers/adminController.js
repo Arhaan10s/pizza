@@ -374,7 +374,6 @@ exports.addPizza = async (req, res) => {
     const lastPizza = await Menu.findOne({ order: [['pizzaId', 'DESC']] });
     const pizzaId = lastPizza ? lastPizza.pizzaId + 1 : 1;
 
-    // Create pizza entry
     const pizzaData = await Menu.create({
       pizzaId,
       adminId,
