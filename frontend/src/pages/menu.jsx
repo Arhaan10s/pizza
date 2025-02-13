@@ -1,8 +1,8 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import PizzaCard from "../components/PizzaCard";
 
-const Menu = ({ addToCart }) => {
+const Menu = ({ addToCart, userId }) => {
   const [pizzas, setPizzas] = useState([]);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const Menu = ({ addToCart }) => {
         <div className="content">
           <div className="featured-items">
             {pizzas.map((pizza, index) => (
-              <PizzaCard key={index} pizzas={pizza} addToCart={addToCart} />
+              <PizzaCard key={index} pizzas={pizza} userId={userId} addToCart={addToCart} />
             ))}
           </div>
         </div>
@@ -71,6 +71,7 @@ const Menu = ({ addToCart }) => {
 
 Menu.propTypes = {
   addToCart: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired, // Add this line
 };
 
 export default Menu;

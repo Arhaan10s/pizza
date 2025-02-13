@@ -6,88 +6,95 @@ const Payment = require("../Models/Payment");
 const Helper = require("../Helper/Helper");
 const { Model } = require("sequelize");
 const moment = require("moment-timezone");
-
+const jwt = require("jsonwebtoken");    
 
 exports.addCart = async (req, res) => {
-  const { id, pizzaId, toppings, category, size, quantity } = req.body;
+  const { name, pizzaId, toppings, category, size, quantity } = req.body;
+
   try {
-    const user = await User.findOne({
-      where: { id, status: 1 },
-    });
-    if (!user) {
-      return res
-        .status(400)
-        .send({ message: "User Not found or not logged in" });
+    // Check if the Authorization header is present
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).send({ message: "Access Denied. No Token Provided." });
     }
 
-    const pizza = await Menu.findOne({
-      where: { pizzaId },
-    });
+    // Extract and decode token
+    const token = authHeader.split(" ")[1];
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET); // Decode token
+    } catch (err) {
+      return res.status(401).send({ message: "Invalid or expired token" });
+    }
+
+
+    // Ensure user is valid
+    const user = await User.findOne({ where: { username:name, status: 1 } });
+    if (!user) {
+      return res.status(400).send({ message: "User not found or not logged in" });
+    }
+
+    // Ensure pizza exists
+    const pizza = await Menu.findOne({ where: { pizzaId } });
     if (!pizza) {
       return res.status(404).send({ message: "Pizza not available" });
     }
 
+    // Validate toppings
     const toppingsArray = Array.isArray(toppings)
       ? toppings
       : toppings.split(",").map((t) => t.trim());
-
-    if (
-      !toppingsArray.every((topping) =>
-        Helper.allowedToppings.includes(topping)
-      )
-    ) {
+    if (!toppingsArray.every((topping) => Helper.allowedToppings.includes(topping))) {
       return res.status(400).send({
-        message: `Invalid topping(s). Allowed toppings are: ${Helper.allowedToppings.join(
-          ", "
-        )}`,
+        message: `Invalid topping(s). Allowed toppings are: ${Helper.allowedToppings.join(", ")}`,
       });
     }
 
-    const sizeArray = Array.isArray(size)
-      ? size
-      : size.split(",").map((s) => s.trim());
-
-    if (!sizeArray.every((s) => Helper.allowedSizes.includes(s))) {
+    // Validate size
+    if (!Helper.allowedSizes.includes(size)) {
       return res.status(400).send({
-        message: `Invalid size(s). Allowed sizes are: ${Helper.allowedSizes.join(
-          ", "
-        )}`,
+        message: `Invalid size. Allowed sizes are: ${Helper.allowedSizes.join(", ")}`,
       });
     }
 
+    // Validate category
     if (!["Veg", "Non-Veg"].includes(category)) {
       return res.status(400).send({
         message: "Invalid category. Allowed categories are: Veg, Non-Veg",
       });
     }
-    const menuItem = await Menu.findOne({
-      where: { pizzaId },
-    });
-    const basePrice = menuItem.basePrice;
-    const Price = Helper.calculateTotalPrice(
-      basePrice,
+
+    // Calculate total price
+    const price = Helper.calculateTotalPrice(
+      pizza.basePrice,
       category,
-      sizeArray[0],
+      size,
       toppingsArray
     );
-    const totalPrice = quantity * Price;
+    const totalPrice = quantity * price;
 
+    // Create new cart entry
     const cartData = await Cart.create({
-      id,
+      id:pizzaId,
       pizzaId,
       categories: category,
-      toppings,
-      sizes: size,
+      toppings: toppingsArray,
+      sizes: [size],
       quantity,
       totalPrice,
     });
+
     return res
       .status(200)
       .send({ message: "Pizza added successfully", cart: cartData });
   } catch (err) {
+    console.error("Error:", err);
     return res.status(500).send({ message: err.message });
   }
 };
+
+
+
 
 exports.updateCart = async (req, res) => {
   const { cartId, username, toppings, size, quantity } = req.body;

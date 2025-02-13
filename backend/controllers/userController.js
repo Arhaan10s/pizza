@@ -55,23 +55,24 @@ exports.logIn = async (req, res) => {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    const token = await jwt.sign(
+    const token = jwt.sign(
       {
-        userId: user.userId,
+        userId: user.id, // Ensure userId is included in the token payload
+        username: user.username,
       },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
     await User.update(
-      { token,status:1 },
+      { token, status: 1 },
       {
         where: { email },
       }
     );
 
     res.status(200).json({
-      userId: user.userId,
+      userId: user.id,
       username: user.username,
       token,
     });

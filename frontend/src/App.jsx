@@ -12,9 +12,11 @@ import AdminDashboard from "./components/adminDashboard";
 import AdminLogin from "./components/adminLogin";
 import Ts from "./pages/ts";
 import AddPizza from "./components/adminAddPizza";
+
 function App() {
   const [cartItems, setCartItems] = useState([]);
   const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -23,12 +25,18 @@ function App() {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(JSON.parse(storedUserId));
+    }
   }, []);
+    
+
 
   const addToCart = (pizza, size, toppings) => {
     console.log("user", user);
-    const userId = user; // Assuming user object contains userId
-    if (!userId) {
+    const useId = userId; // Assuming user object contains userId
+    if (!useId) {
       navigate("/login");
       return;
     }
@@ -53,10 +61,12 @@ function App() {
     }
 
     // Make a POST request to add the item to the cart in the database
-    fetch("http://localhost:3000/api/user/addCart", {
+    const token = localStorage.getItem("token"); // Retrieve the token from localStorage
+    fetch("http://localhost:3000/api/cart/addCart", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
       },
       body: JSON.stringify({
         userId,
@@ -102,11 +112,14 @@ function App() {
     setCartItems(cartItems.filter((item) => item.id !== id));
   };
 
-  const handleLogin = (user) => {
-    setUser(user.username);
-    localStorage.setItem("user", JSON.stringify(user.username));
-    // console.log("Admin ",user);
-    localStorage.setItem("token", user.token); //Assuming the user object contains a token property
+  const handleLogin = ({username,userId}) => {
+    console.log("user----",username,userId)
+    setUser(username);
+    setUserId(userId);
+    // console.log("user----",user)
+    localStorage.setItem("user", JSON.stringify(username));
+    localStorage.setItem("userId", JSON.stringify(userId));
+    localStorage.setItem("token", user.token); // Assuming the user object contains a token property
     console.log("User logged in");
   };
 
@@ -147,11 +160,11 @@ function App() {
   };
 
   const handleAdminLogin = (user) => {
-    // console.log("Admin ",user.token);
     setUser(user.name);
     localStorage.setItem("user", JSON.stringify(user.name));
     localStorage.setItem("token", user.token); // Assuming the user object contains a token property
   };
+
   const isAdminRoute = location.pathname.startsWith("/admin");
   return (
     <>
@@ -159,11 +172,12 @@ function App() {
       <div className="content-wrapper">
         <Routes>
           <Route index element={<Dashboard />} />
-          <Route path="/menu" element={<Menu addToCart={addToCart} />} />
+          <Route path="/menu" element={<Menu addToCart={addToCart} userId={user} />} />
           <Route
             path="/cart"
             element={
               <Cart
+                userId={userId}
                 cartItems={cartItems}
                 increaseQuantity={increaseQuantity}
                 decreaseQuantity={decreaseQuantity}
@@ -183,7 +197,10 @@ function App() {
               path="/admin-dashboard"
               element={<AdminDashboard user={user} onLogout={handleLogout} />}
             />
-            <Route path="/admin-addPizza"  element={<AddPizza user={user} onLogout={handleLogout} />} />
+            <Route
+              path="/admin-addPizza"
+              element={<AddPizza user={user} onLogout={handleLogout} />}
+            />
           </Route>
         </Routes>
       </div>

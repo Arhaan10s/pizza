@@ -1,12 +1,12 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 
-const PizzaCard = ({ pizzas, addToCart }) => {
+const PizzaCard = ({ pizzas, userId }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedToppings, setSelectedToppings] = useState([]);
 
-  const sizeMultipliers = { small: 1, medium: 1.5, large: 2 }; // Multipliers for sizes
+  const sizeMultipliers = { Regular: 1, Medium: 1.5, Large: 2 }; // Multipliers for sizes
   const calculatedPrices = Object.fromEntries(
     Object.entries(sizeMultipliers).map(([size, multiplier]) => [
       size,
@@ -24,7 +24,42 @@ const PizzaCard = ({ pizzas, addToCart }) => {
   };
 
   const handleAddToCart = () => {
-    addToCart(pizzas, selectedSize, selectedToppings);
+    const token = localStorage.getItem("token"); // Retrieve the token from localStorage
+
+    if (!token) {
+      console.error("No token found. User might not be logged in.");
+      return;
+    }
+
+    const cartData = {
+      name: userId,
+      pizzaId: pizzas.pizzaId,
+      toppings: selectedToppings,
+      category: pizzas.categories,
+      size: selectedSize,
+      quantity: 1,
+    };
+
+    fetch(`http://localhost:3000/api/addCart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+      },
+      body: JSON.stringify(cartData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.message === "Pizza added successfully") {
+          console.log("Pizza added to cart:", data.cart);
+        } else {
+          console.error("Error adding pizza to cart:", data.message);
+        }
+      })
+      .catch((err) => {
+        console.error("Network or server error:", err);
+      });
+
     closeModal();
   };
 
@@ -46,9 +81,10 @@ const PizzaCard = ({ pizzas, addToCart }) => {
               className={`modal-btn ${selectedSize === size ? "selected" : ""}`}
               onClick={() => setSelectedSize(size)}
               style={{
-                backgroundColor: selectedSize === size
-                  ? "rgba(209, 248, 13, 0.84)"
-                  : "#4caf50",
+                backgroundColor:
+                  selectedSize === size
+                    ? "rgba(209, 248, 13, 0.84)"
+                    : "#4caf50",
               }}
             >
               {size.toUpperCase()} - ₹{calculatedPrices[size]}
@@ -102,8 +138,9 @@ PizzaCard.propTypes = {
     image: PropTypes.string.isRequired,
     basePrice: PropTypes.number.isRequired, // Single numeric value
     toppings: PropTypes.arrayOf(PropTypes.string), // Optional
+    categories: PropTypes.string.isRequired, // Add this line
   }).isRequired,
-  addToCart: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired, // Add this line
 };
 
 export default PizzaCard;
