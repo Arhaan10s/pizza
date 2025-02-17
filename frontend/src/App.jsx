@@ -14,7 +14,7 @@ import Ts from "./pages/ts";
 import AddPizza from "./components/adminAddPizza";
 
 function App() {
-  const [cartItems, setCartItems] = useState([]);
+
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
@@ -31,85 +31,7 @@ function App() {
     }
   }, []);
 
-  const addToCart = (pizza, size, toppings) => {
-    console.log("user", user);
-    const useId = userId; // Assuming user object contains userId
-    if (!useId) {
-      navigate("/login");
-      return;
-    }
-
-    const existingItem = cartItems.find(
-      (item) =>
-        item.pizza === pizza.pizza &&
-        item.size === size &&
-        item.toppings.join() === toppings.join()
-    );
-
-    if (existingItem) {
-      setCartItems(
-        cartItems.map((item) =>
-          item === existingItem
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      );
-    } else {
-      setCartItems([...cartItems, { ...pizza, size, toppings, quantity: 1 }]);
-    }
-
-    // Make a POST request to add the item to the cart in the database
-    const token = localStorage.getItem("token"); // Retrieve the token from localStorage
-    fetch("http://localhost:3000/api/cart/addCart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-      },
-      body: JSON.stringify({
-        userId,
-        pizzaId: pizza.pizzaId,
-        toppings,
-        category: pizza.categories,
-        size,
-        quantity: existingItem ? existingItem.quantity + 1 : 1,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          console.log("Pizza added to cart successfully");
-        } else {
-          console.log(data.message);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const increaseQuantity = (id) => {
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
-  };
-
-  const decreaseQuantity = (id) => {
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-    );
-  };
-
-  const removeItem = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
-  };
-
+ 
   const handleLogin = ({ user }) => {
     const { username, userId, token } = user;
     console.log("user----", username, userId);
@@ -172,16 +94,12 @@ function App() {
       <div className="content-wrapper">
         <Routes>
           <Route index element={<Dashboard />} />
-          <Route path="/menu" element={<Menu addToCart={addToCart} userId={userId} />} />
+          <Route path="/menu" element={<Menu  userId={userId} />} />
           <Route
             path="/cart"
             element={
               <Cart
                 userId={userId}
-                cartItems={cartItems}
-                increaseQuantity={increaseQuantity}
-                decreaseQuantity={decreaseQuantity}
-                removeItem={removeItem}
               />
             }
           />

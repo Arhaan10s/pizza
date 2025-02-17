@@ -10,7 +10,7 @@ const Cart = ({ userId }) => {
     fetch(`http://localhost:3000/api/getCart`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json',  
         Authorization: `Bearer ${token}`, // Include the token in the Authorization header
       },
       body: JSON.stringify({ id: userId }),
@@ -29,14 +29,15 @@ const Cart = ({ userId }) => {
   }, [userId]);
 
   const calculateTotalPrice = (item) => {
-    const basePrice = item.totalPrice;
+    const basePrice = item.price;
     return basePrice * item.quantity;
   };
-
+  console.log("cartItems", cartItems);
   const totalCartPrice = cartItems.reduce((total, item) => total + calculateTotalPrice(item), 0);
 
   const increaseQuantity = (cartId) => {
     const item = cartItems.find((item) => item.cartId === cartId);
+    console.log("increaseQuantity", item);
     if (item) {
       updateCart(item.cartId, item.quantity + 1);
     }
@@ -50,6 +51,7 @@ const Cart = ({ userId }) => {
   };
 
   const removeItem = (cartId) => {
+    console.log("cart", cartId, userId);
     const token = localStorage.getItem("token"); // Retrieve the token from localStorage
     fetch(`http://localhost:3000/api/removeCart`, {
       method: 'POST',
@@ -84,7 +86,7 @@ const Cart = ({ userId }) => {
         },
         body: JSON.stringify({
           cartId,
-          username: userId,
+          userId: userId,
           toppings: item.toppings,
           size: item.size,
           quantity,

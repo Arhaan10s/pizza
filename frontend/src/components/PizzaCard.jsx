@@ -141,7 +141,7 @@ PizzaCard.propTypes = {
     toppings: PropTypes.arrayOf(PropTypes.string), // Optional
     categories: PropTypes.string.isRequired, // Add this line
   }).isRequired,
-  userId: PropTypes.string.isRequired, // Add this line
+  userId: PropTypes.number.isRequired, // Add this line
 };
 
 export default PizzaCard;

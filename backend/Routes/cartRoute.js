@@ -4,9 +4,9 @@ const { addCart, getCart, removeCart, updateCart, checkOut } = require("../contr
 const authorization = require('../Middleware/authenticate');
 
 router.post("/addCart",authorization, addCart);
-router.post('/getCart', getCart); // Changed to POST to include authorization
-router.delete('/removeCart', removeCart);
-router.post('/updateCart',  updateCart);
-router.post('/checkoutCart',  checkOut);
+router.post('/getCart',authorization, getCart); // Changed to POST to include authorization
+router.post('/removeCart', authorization,removeCart);
+router.post('/updateCart',  authorization,updateCart);
+router.post('/checkoutCart', authorization, checkOut);
 
 module.exports = router;

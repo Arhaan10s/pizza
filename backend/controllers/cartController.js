@@ -100,17 +100,17 @@ exports.addCart = async (req, res) => {
 
 
 exports.updateCart = async (req, res) => {
-  const { cartId, username, toppings, size, quantity } = req.body;
+  const { cartId, userId, toppings, size, quantity } = req.body;
  
   try {
     const user = await User.findOne({
-        where: { username, status: 1 },
+        where: { id:userId, status: 1 },
       });
     const cartItem = await Cart.findOne({
-        where: { cartId, username },
+        where: { cartId, id:userId },
       });
 
-    if (cartId && username && !toppings && !size && !quantity) {
+    if (cartId && userId && !toppings && !size && !quantity) {
       
       if (!user) {
         return res
@@ -130,7 +130,7 @@ exports.updateCart = async (req, res) => {
         sizes: `Sizes available are: ${Helper.allowedSizes.join(", ")}`,
       });
     }
-    if (cartId && username && toppings && size && quantity) {
+    if (cartId && userId && toppings && size && quantity) {
 
       const toppingsArray = Array.isArray(toppings)
         ? toppings
@@ -182,7 +182,7 @@ exports.updateCart = async (req, res) => {
         quantity,
         totalPrice,
       },{
-        where:{cartId,username}
+        where:{cartId,id:userId}
       }
     )
       return res.status(200).send({
@@ -232,6 +232,7 @@ exports.getCart = async (req, res) => {
     }
 
     const cartDetails = cartItems.map((item) => ({
+      cartId:item.cartId,
       pizzaName: item.Menu.pizza,
       toppings: item.toppings,
       size: item.sizes,
@@ -259,10 +260,10 @@ exports.getCart = async (req, res) => {
 };
 
 exports.removeCart = async (req, res) => {
-  const { cartId, username } = req.body;
+  const { cartId, userId } = req.body;
   try {
     const user = await User.findOne({
-      where: { username, status: 1 },
+      where: { id:userId, status: 1 },
     });
     if (!user) {
       return res
@@ -271,21 +272,20 @@ exports.removeCart = async (req, res) => {
     }
 
     const cartItem = await Cart.findOne({
-      where: { cartId, username },
+      where: { cartId, id:userId },
     });
     if (!cartItem) {
       return res.status(404).send({ message: "Cart not found" });
     }
 
     const remove = await Cart.destroy({
-      where: { cartId, username },
+      where: { cartId, id:userId },
     });
     return res.status(200).send({ message: "Cart removed successfully" });
   } catch (err) {
     return res.status(404).send({ message: err.message });
   }
 };
-
 
 exports.checkOut = async (req, res) => {
   const { id, paymentMethod, deliveryAddress, contactNumber } = req.body;
