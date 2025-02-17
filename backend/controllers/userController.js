@@ -72,9 +72,11 @@ exports.logIn = async (req, res) => {
     );
 
     res.status(200).json({
-      userId: user.id,
-      username: user.username,
-      token,
+      user: {
+        username: user.username,
+        userId: user.id,
+        token,
+      },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -85,7 +87,7 @@ exports.getUser = async (req, res) => {
   const { id } = req.body;
   try {
     const user = await User.findOne({
-      where: { userId: id , status:1},
+      where: { id: id , status:1},
     });
 
     if(!user)

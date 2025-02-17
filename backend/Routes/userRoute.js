@@ -5,7 +5,7 @@ const authenticate = require('../Middleware/authenticate');
 
 router.post('/registerUser',register);
 router.post('/signInUser',logIn);
-router.get('/getUser',authenticate,getUser);
+router.post('/getUser',authenticate,getUser);
 router.post('/logOutUser',logOut);
 router.get('/getOrder',getOrders);
 router.post('/forgetPasswordUser',forgetPassword);

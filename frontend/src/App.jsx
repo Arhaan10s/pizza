@@ -30,8 +30,6 @@ function App() {
       setUserId(JSON.parse(storedUserId));
     }
   }, []);
-    
-
 
   const addToCart = (pizza, size, toppings) => {
     console.log("user", user);
@@ -112,14 +110,14 @@ function App() {
     setCartItems(cartItems.filter((item) => item.id !== id));
   };
 
-  const handleLogin = ({username,userId}) => {
-    console.log("user----",username,userId)
+  const handleLogin = ({ user }) => {
+    const { username, userId, token } = user;
+    console.log("user----", username, userId);
     setUser(username);
     setUserId(userId);
-    // console.log("user----",user)
     localStorage.setItem("user", JSON.stringify(username));
     localStorage.setItem("userId", JSON.stringify(userId));
-    localStorage.setItem("token", user.token); // Assuming the user object contains a token property
+    localStorage.setItem("token", token); // Assuming the user object contains a token property
     console.log("User logged in");
   };
 
@@ -146,7 +144,9 @@ function App() {
       .then((data) => {
         if (data) {
           setUser(null);
+          setUserId(null);
           localStorage.removeItem("user");
+          localStorage.removeItem("userId");
           localStorage.removeItem("token");
           navigate(isAdminRoute ? "/admin-login" : "/login");
           console.log("Logged out");
@@ -172,7 +172,7 @@ function App() {
       <div className="content-wrapper">
         <Routes>
           <Route index element={<Dashboard />} />
-          <Route path="/menu" element={<Menu addToCart={addToCart} userId={user} />} />
+          <Route path="/menu" element={<Menu addToCart={addToCart} userId={userId} />} />
           <Route
             path="/cart"
             element={

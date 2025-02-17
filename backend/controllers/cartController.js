@@ -9,27 +9,11 @@ const moment = require("moment-timezone");
 const jwt = require("jsonwebtoken");    
 
 exports.addCart = async (req, res) => {
-  const { name, pizzaId, toppings, category, size, quantity } = req.body;
+  const { userId, pizzaId, toppings, category, size, quantity } = req.body;
 
   try {
-    // Check if the Authorization header is present
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).send({ message: "Access Denied. No Token Provided." });
-    }
-
-    // Extract and decode token
-    const token = authHeader.split(" ")[1];
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET); // Decode token
-    } catch (err) {
-      return res.status(401).send({ message: "Invalid or expired token" });
-    }
-
-
     // Ensure user is valid
-    const user = await User.findOne({ where: { username:name, status: 1 } });
+    const user = await User.findOne({ where: { id: userId, status: 1 } });
     if (!user) {
       return res.status(400).send({ message: "User not found or not logged in" });
     }
@@ -64,6 +48,27 @@ exports.addCart = async (req, res) => {
       });
     }
 
+    // Check if the same pizza already exists in the cart for this user
+    const existingCartItem = await Cart.findOne({ where: { id: userId, pizzaId } });
+    if (existingCartItem) {
+      // Update quantity and totalPrice if already exists
+      const updatedQuantity = existingCartItem.quantity + quantity;
+      const price = Helper.calculateTotalPrice(
+        pizza.basePrice,
+        category,
+        size,
+        toppingsArray
+      );
+      const updatedTotalPrice = updatedQuantity * price;
+
+      existingCartItem.quantity = updatedQuantity;
+      existingCartItem.totalPrice = updatedTotalPrice;
+
+      await existingCartItem.save();
+
+      return res.status(200).send({ message: "Cart updated successfully", cart: existingCartItem });
+    }
+
     // Calculate total price
     const price = Helper.calculateTotalPrice(
       pizza.basePrice,
@@ -75,7 +80,7 @@ exports.addCart = async (req, res) => {
 
     // Create new cart entry
     const cartData = await Cart.create({
-      id:pizzaId,
+      id: userId,
       pizzaId,
       categories: category,
       toppings: toppingsArray,
@@ -92,8 +97,6 @@ exports.addCart = async (req, res) => {
     return res.status(500).send({ message: err.message });
   }
 };
-
-
 
 
 exports.updateCart = async (req, res) => {

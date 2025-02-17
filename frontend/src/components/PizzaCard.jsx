@@ -30,9 +30,9 @@ const PizzaCard = ({ pizzas, userId }) => {
       console.error("No token found. User might not be logged in.");
       return;
     }
-
+    console.log("Add to Cart", token)
     const cartData = {
-      name: userId,
+      userId: userId,
       pizzaId: pizzas.pizzaId,
       toppings: selectedToppings,
       category: pizzas.categories,
@@ -50,6 +50,7 @@ const PizzaCard = ({ pizzas, userId }) => {
     })
       .then((response) => response.json())
       .then((data) => {
+        // console.log("dataa",data);
         if (data.message === "Pizza added successfully") {
           console.log("Pizza added to cart:", data.cart);
         } else {
