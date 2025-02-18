@@ -7,7 +7,7 @@ router.post('/registerUser',register);
 router.post('/signInUser',logIn);
 router.post('/getUser',authenticate,getUser);
 router.post('/logOutUser',logOut);
-router.get('/getOrder',getOrders);
+router.post('/getOrder',authenticate,getOrders);
 router.post('/forgetPasswordUser',forgetPassword);
 router.delete('/deleteUser',deleteUser);
 router.post('/recieved',recieved);

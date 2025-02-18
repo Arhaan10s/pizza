@@ -14,8 +14,8 @@ const Header = ({ user, onLogout }) => {
               <li className="header-sub">
                 <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>Home</NavLink>
                 <NavLink to="/menu" className={({ isActive }) => (isActive ? 'active' : '')}>Menu</NavLink>
-                <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>About</NavLink>
-                <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>Contact Us</NavLink>
+                <NavLink to="/order" className={({ isActive }) => (isActive ? 'active' : '')}>Orders</NavLink>
+                <NavLink to="/payment" className={({ isActive }) => (isActive ? 'active' : '')}>Payment</NavLink>
                 <NavLink id="lin" to="/cart" className={({ isActive }) => (isActive ? 'active' : '')}><FaShoppingCart /></NavLink>
                 {user ? (
                   <NavLink to="/" onClick={onLogout} className={({ isActive }) => (isActive ? 'active' : '')}>Logout</NavLink>

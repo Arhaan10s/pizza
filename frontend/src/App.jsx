@@ -10,8 +10,9 @@ import Register from "./pages/register";
 import AdminRoute from "./components/adminRoute";
 import AdminDashboard from "./components/adminDashboard";
 import AdminLogin from "./components/adminLogin";
-import Ts from "./pages/ts";
 import AddPizza from "./components/adminAddPizza";
+import Orders from "./pages/order";
+import Payments from "./pages/payments";
 
 function App() {
 
@@ -105,7 +106,8 @@ function App() {
           />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/ts" element={<Ts />} />
+          <Route path="/order" element={<Orders userId={userId}/>} />
+          <Route path="/payment" element={<Payments userId={userId} />} />
           <Route
             path="/admin-login"
             element={<AdminLogin onAdminLogin={handleAdminLogin} />}

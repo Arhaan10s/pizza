@@ -539,7 +539,7 @@ input[type="text"]::placeholder {
     border-bottom: 1px solid rgba(217, 255, 25, 0.8);
     border-radius: 30px;
     object-fit: cover;
-    border: 2px solid rgba(217, 255, 25);
+    border: 3.5px solid rgba(217, 255, 25);
     margin: 1rem;
 }
 
@@ -715,7 +715,7 @@ button:active {
   }
   
   .section-title {
-    color: rgb(217, 255, 25);
+    color: rgba(242, 44, 44, 0.963);
     font-size: 2rem;
     text-transform: uppercase;
     margin-bottom: 1.5rem;
@@ -839,4 +839,261 @@ button:active {
       padding-right: 40px;
     }
   }
+  .checkout-btn {
+    background: #ff6600;
+    font-size: large;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  .checkout-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 35%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(242, 44, 44, 0.98), rgba(255, 89, 89, 0.98));
+    box-shadow: -6px 0 15px rgba(0, 0, 0, 0.2);
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
+    border-radius: 10px 0 0 10px;
+  }
+  
+  .checkout-modal.show {
+    transform: translateX(0);
+    box-shadow: -10px 0 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .modal-content {
+    padding: 25px;
+    text-align: center;
+    color: white;
+  }
+  
+  .head {
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffee00;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  
+  .modal-content label {
+    display: block;
+    margin: 10px 0 5px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+  }
+  
+  .modal-content input {
+    width: 90%;
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    color: black;
+  }
+  
+  .modal-content input::placeholder {
+    color: rgba(0, 0, 0, 0.6);
+  }
+  
+  .modal-content button {
+    width: 92%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .modal-content button:first-of-type {
+    background: #ecde1b;
+    color: black;
+  }
+  
+  .modal-content button:first-of-type:hover {
+    background: #ffd700;
+  }
+  
+  .close-btn {
+    background: rgba(0, 0, 0, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .close-btn:hover {
+    background: rgba(255, 0, 0, 0.4);
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .custom-alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: rgba(0, 0, 0, 0.8); /* Dark semi-transparent background */
+    backdrop-filter: blur(10px); /* Glassmorphism effect */
+    color: white;
+    padding: 25px 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0px 4px 20px rgba(255, 255, 255, 0.2);
+    animation: fadeInScale 0.4s ease-in-out forwards;
+  }
+  
+  @keyframes fadeInScale {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  
+  .rotating-symbol {
+    font-size: 50px;
+    display: inline-block;
+    animation: rotateSymbol 1s infinite linear;
+    /* text-shadow: 0px 0px 15px rgba(255, 255, 0, 0.7); Glowing effect */
+  }
+  
+  @keyframes rotateSymbol {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+  
+  /* Subtle glow effect on text */
+  .custom-alert p {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+    text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.3);
+  }
+  
+
+  /* Container styles */
+.payment-container {
+    padding: 30px;
+    max-width: 100% auto;
+    margin: 0 auto;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, rgba(242, 44, 44, 0.98), rgba(255, 89, 89, 0.98));
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Title styling */
+  .payment-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffd700;
+    text-align: center;
+    margin-bottom: 20px;
+    /* border-bottom: 2px solid #ffd700  */
+    display: inline-block;
+    padding-bottom: 5px;
+  }
+  
+  /* Loader and error styles */
+  .loading,
+  .error-message,
+  .no-payment {
+    text-align: center;
+    font-size: 16px;
+    margin: 15px 0;
+  }
+  
+  .loading {
+    color: #6c757d;
+  }
+  
+  .error-message {
+    color: #d9534f;
+    font-weight: bold;
+  }
+  
+  .no-payment {
+    color: #6c757d;
+    font-style: italic;
+  }
+  
+  /* Payment details card */
+  .payment-details {
+    background: white;
+    border: 1px solid #e6e8ec;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .payment-details:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Unique styles for individual payment IDs */
+  #payment-1 {
+    border-left: 5px solid #ffd700; /* Blue accent */
+  }
+  
+  #payment-2 {
+    border-left: 5px solid #28a745; /* Green accent */
+  }
+  
+  #payment-3 {
+    border-left: 5px solid #ffc107; /* Yellow accent */
+  }
+  
+  #payment-4 {
+    border-left: 5px solid #dc3545; /* Red accent */
+  }
+  
+  /* Text within payment details */
+  .payment-details p {
+    margin: 10px 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+  }
+  
+  .payment-details p strong {
+    font-size: 1.1rem; 
+    color: #222; 
+    line-height: 1; 
+    font-weight: 600;
+    margin-bottom: 0.5rem; 
+    letter-spacing: 0.5px; 
+    text-shadow:  1px  rgba(0, 0, 0, 0.1); 
+    text-transform: lowercase;
+    border-bottom: 1px solid #222;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 600px) {
+    .payment-container {
+      padding: 20px;
+    }
+  
+    .payment-title {
+      font-size: 24px;
+    }
+  
+    .payment-details {
+      padding: 15px;
+    }
+  
+    .payment-details p {
+      font-size: 14px;
+    }
+  }
+  
   
