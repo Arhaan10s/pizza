@@ -55,17 +55,20 @@ exports.completePayment = async (req, res) => {
     }
   };
 
-exports.getPayment = async (req, res) =>{
+  exports.getPayment = async (req, res) => {
     const { userId } = req.body;
     try {
-        const payment = await Payment.findAll({ where: { id: userId } });
-        if (!payment) {
-          return res.status(404).send({ message: "Payment record not found." });
-        }
-        return res.status(200).send(payment);
-      } catch (err) {
-        return res.status(500).send({ message: err.message });
+      const payment = await Payment.findAll({
+        where: { id: userId },
+        order: [["createdAt", "DESC"]], 
+      });
+      if (!payment || payment.length === 0) {
+        return res.status(404).send({ message: "Payment record not found." });
       }
+      return res.status(200).send(payment);
+    } catch (err) {
+      return res.status(500).send({ message: err.message });
     }
-
+  };
+  
   

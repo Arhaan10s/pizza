@@ -5,18 +5,28 @@ const Payments = ({ userId }) => {
   const [payment, setPayment] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [token,setToken] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
+      setError("No token found. Please log in.");
+      setLoading(false);
+    }
+  }, []);
 
-    fetch("http://localhost:3000/api/getPayment", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Fixed string interpolation
-      },
-      body: JSON.stringify({ userId }),
-    })
+  useEffect(() => {
+    if(token){
+      fetch("http://localhost:3000/api/getPayment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Fixed string interpolation
+        },
+        body: JSON.stringify({ userId }),
+      })
       .then((response) => response.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -31,7 +41,42 @@ const Payments = ({ userId }) => {
         setError("An error occurred. Please try again.");
         setLoading(false);
       });
+    }
   }, [userId]);
+
+  const makePayment = ({ paymentId, transactionId, amount }) => {
+    fetch("http://localhost:3000/api/completePayment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ paymentId, transactionId, amount }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.message) {
+          alert(data.message);
+          // Update the payment status in the state
+          setPayment((prevPayments) =>
+            prevPayments.map((payment) =>
+              payment.paymentId === paymentId
+                ? { ...payment, paymentStatus: data.paymentStatus }
+                : payment
+            )
+          );
+        } else {
+          setError(data.message || "Payment failed.");
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Network or server error:", err);
+        setError("An error occurred. Please try again.");
+        setLoading(false);
+      });
+  };
+
 
   return (
     <div className="payment-container">
@@ -47,6 +92,21 @@ const Payments = ({ userId }) => {
             <p><strong>Amount:</strong> ₹{p.amount}</p>
             <p><strong>Payment Status:</strong> {p.paymentStatus}</p>
             <p><strong>Transaction ID:</strong> {p.transactionId}</p>
+            <p><strong>Payment Method:</strong> {p.paymentMethod}</p>
+                {p.paymentStatus !== "Completed" && (  
+                <button
+                className="payment-button"
+                onClick={() =>
+                  makePayment({
+                    paymentId: p.paymentId,
+                    transactionId: p.transactionId,
+                    amount: p.amount,
+                  })
+                }
+              >
+                Pay
+              </button>  
+              )}      
           </div>
         ))
       ) : (

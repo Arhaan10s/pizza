@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, logIn,getUser, logOut, getOrders, forgetPassword,getPizza, deleteUser, recieved, cancelOrder } = require("../controllers/userController");
+const { register, logIn,getUser, logOut, getOrders, forgetPassword,getPizza, deleteUser, received, cancelOrder } = require("../controllers/userController");
 const authenticate = require('../Middleware/authenticate');
 
 router.post('/registerUser',register);
@@ -10,7 +10,7 @@ router.post('/logOutUser',logOut);
 router.post('/getOrder',authenticate,getOrders);
 router.post('/forgetPasswordUser',forgetPassword);
 router.delete('/deleteUser',deleteUser);
-router.post('/recieved',recieved);
+router.post('/received',authenticate,received);
 router.post('/cancelOrder',cancelOrder);
 router.get('/user/getPizza',getPizza)
 

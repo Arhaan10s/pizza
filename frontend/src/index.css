@@ -1096,4 +1096,45 @@ button:active {
     }
   }
   
+  .payment-button{
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+  }
+
+  .custom-alert-p {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeInOut 3s ease-in-out;
+    z-index: 1000;
+  }
+  
+  /* Keyframes for the fade-in and fade-out effect */
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-20px);
+    }
+    10% {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    90% {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-20px);
+    }
+  }
   

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { NavLink } from "react-router-dom";
 import PropTypes from 'prop-types';
 import AdminHeader from './adminHeader';
 
@@ -54,6 +53,7 @@ const AdminDashboard = ({user,onLogout}) => {
         <section className="orders-section">
           <h2 className="section-title">Orders</h2>
           <input
+          style={{padding: "10px", margin: "10px"}}
             type="number"
             placeholder="Search by Order ID"
             value={searchTerm}

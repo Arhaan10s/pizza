@@ -348,7 +348,8 @@ exports.getOrders = async (req, res) => {
       return res.status(404).send({ message: "User not found or not logged In" });
     }
   const order = await Order.findAll({
-    where :{ id}
+    where :{ id},
+    order: [["createdAt", "DESC"]],
   })
   
   if(!order)
@@ -364,13 +365,13 @@ exports.getOrders = async (req, res) => {
 
 };
 
-exports.recieved = async (req, res) => {
+exports.received = async (req, res) => {
   const { userId, orderId } = req.body;
 
   try {
     // Validate user
     const user = await User.findOne({
-      where: { userId, status: 1 },
+      where: { id:userId, status: 1 },
     });
 
     if (!user) {
@@ -386,8 +387,8 @@ exports.recieved = async (req, res) => {
 
     // Update order status from "Dispatched" to "Completed"
     const [affectedRows] = await Order.update(
-      { status: "Completed" },
-      { where: { userId, status: "Dispatched", orderId } }
+      { status: "Recieved" },
+      { where: { id:userId, status: "Dispatched", orderId } }
     );
 
     // Check if any rows were updated
